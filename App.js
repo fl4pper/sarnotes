@@ -13,7 +13,6 @@ const headerColor = ['rgb(156, 163, 175)', 'rgb(15,23,42)']
 
 function HomeScreen({ navigation }) {
   const { data: searchData, error, isLoading } = useSearchNotesQuery("");
-  const [ deleteNote ] = useDeleteNoteMutation();
   
   const [lightMode, onLightModeChange] = useState(0);
 
@@ -65,8 +64,14 @@ function HomeScreen({ navigation }) {
 }
 
 function EditScreen({ route, navigation }) {
+  const [ deleteNote ] = useDeleteNoteMutation();
+
   useLayoutEffect(() => {
-    
+    navigation.setOptions({ 
+      headerRight: () => (
+        <Button onPress={() => deleteNote(route.params.data)} title="Remove" />
+      ),
+     });
   }, []);
 
   return (
