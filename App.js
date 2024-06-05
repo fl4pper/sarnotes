@@ -13,7 +13,6 @@ const headerColor = ['rgb(156, 163, 175)', 'rgb(15,23,42)']
 
 function HomeScreen({ navigation }) {
   const { data: searchData, error, isLoading } = useSearchNotesQuery("");
-  const [ addNote, { data: addNoteData, error: addNoteError }] = useAddNoteMutation();
   const [ deleteNote ] = useDeleteNoteMutation();
   
   const [lightMode, onLightModeChange] = useState(0);
@@ -38,13 +37,6 @@ function HomeScreen({ navigation }) {
       ),
     });
   }, [navigation, lightMode]);
-
-  useEffect(() => {
-    if (addNoteData != undefined) {
-      console.log(addNoteData.title);
-      navigation.navigate("Edit", {data: addNoteData});
-    }
-  }, [addNoteData, navigation.lightMode]);
 
   const renderItem = ({ item }) => (
     <TouchableOpacity onPress={() => navigation.navigate("Edit", {data: item}) } style={tw`w-[98%] mb-0.5 mx-auto bg-purple-300 rounded-sm px-1`}> 
@@ -85,13 +77,29 @@ function EditScreen({ route, navigation }) {
 }
 
 function AddScreen({ route, navigation }) {
+  const [title, changeTitle] = useState('');
+  const [content, changeContent] = useState('');
+
+  const [ addNote, { data: addNoteData, error: addNoteError }] = useAddNoteMutation();
+
   useLayoutEffect(() => {
-    navigation.setOptions({ title: route.params.data.title });
-  }, []);
+    navigation.setOptions({ 
+      headerRight: () => (
+        <Button onPress={() => addNote({title: title, content: content})} title="Apply" />
+      ),
+     });
+  }, [title, content, navigation]);
+
+  useEffect(() => {
+    if (addNoteData != undefined) {
+      console.log(addNoteData.title);
+      navigation.navigate("Home");
+    }
+  }, [addNoteData]);
 
   return (
     <View style={tw`flex-1 items-center justify-center bg-purple-400`}>
-      <Text style={tw`text-lg text-white`}>Add Screen {route.params.data.title} {route.params.data.id}</Text>
+      <Text style={tw`text-lg text-white`}>Add Screen</Text>
     </View>
   );
 }
