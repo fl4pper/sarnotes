@@ -48,7 +48,8 @@ function HomeScreen({ navigation }) {
 
   const renderItem = ({ item }) => (
     <TouchableOpacity onPress={() => navigation.navigate("Edit", {data: item}) } style={tw`w-[98%] mb-0.5 mx-auto bg-purple-300 rounded-sm px-1`}> 
-      <Text>{item.title} {item.id}</Text>
+      <Text>{item.title}</Text>
+      <Text>{item.content}</Text>
     </TouchableOpacity>
   )
   return (
