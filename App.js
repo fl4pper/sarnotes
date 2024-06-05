@@ -16,14 +16,28 @@ function HomeScreen({ navigation }) {
   const [ addNote, { data: addNoteData, error: addNoteError }] = useAddNoteMutation();
   const [ deleteNote ] = useDeleteNoteMutation();
   
+  const [lightMode, onLightModeChange] = useState(0);
+
+  const swapLightMode = () => {
+    onLightModeChange((lightMode + 1) % 2);
+  }
+
   const styles = StyleSheet.create({
     background: {
-      backgroundColor:bodyColor[navigation.lightMode],
+      backgroundColor:bodyColor[lightMode],
       flex: 1,
       alignItems: 'center',
       justifyContent: 'center'
     }
   });
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Button onPress={swapLightMode} title="Mode" />
+      ),
+    });
+  }, [navigation, lightMode]);
 
   useEffect(() => {
     if (addNoteData != undefined) {
@@ -69,16 +83,22 @@ function EditScreen({ route, navigation }) {
   );
 }
 
+function AddScreen({ route, navigation }) {
+  useLayoutEffect(() => {
+    navigation.setOptions({ title: route.params.data.title });
+  }, []);
+
+  return (
+    <View style={tw`flex-1 items-center justify-center bg-purple-400`}>
+      <Text style={tw`text-lg text-white`}>Add Screen {route.params.data.title} {route.params.data.id}</Text>
+    </View>
+  );
+}
+
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   useDeviceContext(tw);
-
-  const [lightMode, onLightModeChange] = useState(0);
-
-  const swapLightMode = () => {
-    onLightModeChange((lightMode + 1) % 2);
-  }
 
   return (
     <Provider store={store}>
@@ -86,26 +106,33 @@ export default function App() {
         <Stack.Navigator initialRouteName="Home">
           <Stack.Screen
             options={{
-              headerStyle: {backgroundColor:headerColor[lightMode]}, 
+              headerStyle: {backgroundColor:headerColor[1]}, 
               headerTintColor: '#fff',
               headerTitleStyle: tw`font-bold`,
               headerShadowVisible: false, // gets rid of border on device
-              headerRight: () => (
-                <Button onPress={swapLightMode} title="Mode" />
-              ),
             }}
             name="Home"
             component={HomeScreen}
           />
           <Stack.Screen
             options={{
-              headerStyle: {backgroundColor:headerColor[lightMode]}, 
+              headerStyle: {backgroundColor:headerColor[1]}, 
               headerTintColor: '#fff',
               headerTitleStyle: tw`font-bold`,
               headerShadowVisible: false, // gets rid of border on device
             }}
             name="Edit"
             component={EditScreen}
+          />
+          <Stack.Screen
+            options={{
+              headerStyle: {backgroundColor:headerColor[1]}, 
+              headerTintColor: '#fff',
+              headerTitleStyle: tw`font-bold`,
+              headerShadowVisible: false, // gets rid of border on device
+            }}
+            name="Add"
+            component={AddScreen}
           />
         </Stack.Navigator>
       </NavigationContainer>
