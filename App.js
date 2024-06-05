@@ -1,5 +1,5 @@
-import { useEffect, useLayoutEffect } from 'react';
-import { TouchableOpacity, View, Text } from 'react-native';
+import { useEffect, useLayoutEffect, useState } from 'react';
+import { TouchableOpacity, View, Text, StyleSheet, Button } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import tw, { useDeviceContext } from 'twrnc';
@@ -8,26 +8,37 @@ import { store } from './store';
 import MasonryList from '@react-native-seoul/masonry-list'
 import { useSearchNotesQuery, useAddNoteMutation, useDeleteNoteMutation } from './db';
 
+const bodyColor = ['rgb(241, 245, 249)', 'rgb(30,41,59)']
+const headerColor = ['rgb(156, 163, 175)', 'rgb(15,23,42)']
+
 function HomeScreen({ navigation }) {
   const { data: searchData, error, isLoading } = useSearchNotesQuery("");
   const [ addNote, { data: addNoteData, error: addNoteError }] = useAddNoteMutation();
   const [ deleteNote ] = useDeleteNoteMutation();
   
+  const styles = StyleSheet.create({
+    background: {
+      backgroundColor:bodyColor[navigation.lightMode],
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center'
+    }
+  });
+
   useEffect(() => {
     if (addNoteData != undefined) {
       console.log(addNoteData.title);
       navigation.navigate("Edit", {data: addNoteData});
     }
-  }, [addNoteData]);
+  }, [addNoteData, navigation.lightMode]);
 
   const renderItem = ({ item }) => (
     <TouchableOpacity onPress={() => deleteNote(item) } style={tw`w-[98%] mb-0.5 mx-auto bg-purple-300 rounded-sm px-1`}> 
       <Text>{item.title} {item.id}</Text>
     </TouchableOpacity>
   )
-
   return (
-    <View style={tw`flex-1 items-center justify-center bg-purple-400`}>
+    <View style={styles.background}>
       {searchData ? 
         <MasonryList
           style={tw`px-0.5 pt-0.5 pb-20`}
@@ -63,23 +74,32 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   useDeviceContext(tw);
 
+  const [lightMode, onLightModeChange] = useState(0);
+
+  const swapLightMode = () => {
+    onLightModeChange((lightMode + 1) % 2);
+  }
+
   return (
     <Provider store={store}>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Home">
           <Stack.Screen
             options={{
-              headerStyle: tw`bg-purple-300 border-0`,
+              headerStyle: {backgroundColor:headerColor[lightMode]}, 
               headerTintColor: '#fff',
               headerTitleStyle: tw`font-bold`,
               headerShadowVisible: false, // gets rid of border on device
+              headerRight: () => (
+                <Button onPress={swapLightMode} title="Mode" />
+              ),
             }}
             name="Home"
             component={HomeScreen}
           />
           <Stack.Screen
             options={{
-              headerStyle: tw`bg-purple-300 border-0`,
+              headerStyle: {backgroundColor:headerColor[lightMode]}, 
               headerTintColor: '#fff',
               headerTitleStyle: tw`font-bold`,
               headerShadowVisible: false, // gets rid of border on device
