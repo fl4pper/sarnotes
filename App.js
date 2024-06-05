@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useState } from 'react';
-import { TouchableOpacity, View, Text, StyleSheet, Button } from 'react-native';
+import { TouchableOpacity, View, Text, StyleSheet, Button, TextInput } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import tw, { useDeviceContext } from 'twrnc';
@@ -98,8 +98,18 @@ function AddScreen({ route, navigation }) {
   }, [addNoteData]);
 
   return (
-    <View style={tw`flex-1 items-center justify-center bg-purple-400`}>
-      <Text style={tw`text-lg text-white`}>Add Screen</Text>
+    <View style={tw`flex-1 bg-purple-400`}>
+      <TextInput style={styles.inputfield}
+        onChangeText={text => changeTitle(text)}
+        value={title}
+        placeholder="Title"
+      />
+      <TextInput style={styles.inputfield}
+        onChangeText={text => changeContent(text)}
+        value={content}
+        placeholder="Body"
+        multiline={true}
+      />
     </View>
   );
 }
@@ -148,3 +158,12 @@ export default function App() {
     </Provider>
   );
 }
+
+const styles = StyleSheet.create({
+  inputfield: {
+    height: 48,
+    margin: 12,
+    fontSize: 20,
+    padding: 12,
+  },
+});
