@@ -6,7 +6,7 @@ import tw, { useDeviceContext } from 'twrnc';
 import { Provider } from 'react-redux';
 import { store } from './store';
 import MasonryList from '@react-native-seoul/masonry-list'
-import { useSearchNotesQuery, useAddNoteMutation, useDeleteNoteMutation } from './db';
+import { useSearchNotesQuery, useAddNoteMutation, useDeleteNoteMutation, useUpdateNoteMutation } from './db';
 
 const bodyColor = ['rgb(241, 245, 249)', 'rgb(30,41,59)']
 const headerColor = ['rgb(156, 163, 175)', 'rgb(15,23,42)']
@@ -64,7 +64,11 @@ function HomeScreen({ navigation }) {
 }
 
 function EditScreen({ route, navigation }) {
+  const [title, changeTitle] = useState(route.params.data.title);
+  const [content, changeContent] = useState(route.params.data.content);
+
   const [ deleteNote, { data: deleteNoteData } ] = useDeleteNoteMutation();
+  const [ updateNote, { data: updateNoteData } ] = useUpdateNoteMutation();
 
   useLayoutEffect(() => {
     navigation.setOptions({ 
@@ -81,8 +85,18 @@ function EditScreen({ route, navigation }) {
   }, [deleteNoteData]);
 
   return (
-    <View style={tw`flex-1 items-center justify-center bg-purple-400`}>
-      <Text style={tw`text-lg text-white`}>Edit Screen {route.params.data.title} {route.params.data.id}</Text>
+    <View style={tw`flex-1 bg-purple-400`}>
+      <TextInput style={styles.inputfield}
+        onChangeText={text => changeTitle(text)}
+        value={title}
+        placeholder="Title"
+      />
+      <TextInput style={styles.inputfield}
+        onChangeText={text => changeContent(text)}
+        value={content}
+        placeholder="Body"
+        multiline={true}
+      />
     </View>
   );
 }
