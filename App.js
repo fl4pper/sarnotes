@@ -47,7 +47,7 @@ function HomeScreen({ navigation }) {
   }, [addNoteData, navigation.lightMode]);
 
   const renderItem = ({ item }) => (
-    <TouchableOpacity onPress={() => deleteNote(item) } style={tw`w-[98%] mb-0.5 mx-auto bg-purple-300 rounded-sm px-1`}> 
+    <TouchableOpacity onPress={() => navigation.navigate("Edit", {data: item}) } style={tw`w-[98%] mb-0.5 mx-auto bg-purple-300 rounded-sm px-1`}> 
       <Text>{item.title} {item.id}</Text>
     </TouchableOpacity>
   )
@@ -64,7 +64,7 @@ function HomeScreen({ navigation }) {
         />  
         : <></>
       }
-      <TouchableOpacity onPress={() => { addNote({title: "test", content: "content"}); }} style={tw`bg-blue-500 rounded-full absolute bottom-[5%] right-8 mx-auto items-center flex-1 justify-center w-12 h-12`}>
+      <TouchableOpacity onPress={() => { navigation.navigate("Add", {data: ""}); }} style={tw`bg-blue-500 rounded-full absolute bottom-[5%] right-8 mx-auto items-center flex-1 justify-center w-12 h-12`}>
         <Text style={tw`text-white text-center text-3xl mt--1`}>+</Text>
       </TouchableOpacity>
     </View>
@@ -73,7 +73,7 @@ function HomeScreen({ navigation }) {
 
 function EditScreen({ route, navigation }) {
   useLayoutEffect(() => {
-    navigation.setOptions({ title: route.params.data.title });
+    
   }, []);
 
   return (
