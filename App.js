@@ -64,7 +64,7 @@ function HomeScreen({ navigation }) {
 }
 
 function EditScreen({ route, navigation }) {
-  const [ deleteNote ] = useDeleteNoteMutation();
+  const [ deleteNote, { data: deleteNoteData } ] = useDeleteNoteMutation();
 
   useLayoutEffect(() => {
     navigation.setOptions({ 
@@ -73,6 +73,12 @@ function EditScreen({ route, navigation }) {
       ),
      });
   }, []);
+
+  useEffect(() => {
+    if (deleteNoteData != undefined) {
+      navigation.navigate("Home");
+    }
+  }, [deleteNoteData]);
 
   return (
     <View style={tw`flex-1 items-center justify-center bg-purple-400`}>
