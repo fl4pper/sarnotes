@@ -10,11 +10,18 @@ import { useSearchNotesQuery, useAddNoteMutation, useDeleteNoteMutation, useUpda
 
 const bodyColor = ['rgb(241, 245, 249)', 'rgb(30,41,59)']
 const headerColor = ['rgb(156, 163, 175)', 'rgb(15,23,42)']
+const noteColor = ['rgb(100, 116, 139)', 'rgb(203, 213, 225)']
 
-function HomeScreen({ navigation }) {
-  const { data: searchData, error, isLoading } = useSearchNotesQuery("");
-  
+function HomeScreen({ navigation }) {  
+  const [submittedSearch, onSubmitSearch] = useState("");
+  const [search, onSearchChange] = useState("");
   const [lightMode, onLightModeChange] = useState(0);
+
+  const { data: searchData, error, isLoading } = useSearchNotesQuery(submittedSearch);
+
+  const submitSearch = () => {
+    onSubmitSearch(search);
+  }
 
   const swapLightMode = () => {
     onLightModeChange((lightMode + 1) % 2);
@@ -38,13 +45,18 @@ function HomeScreen({ navigation }) {
   }, [navigation, lightMode]);
 
   const renderItem = ({ item }) => (
-    <TouchableOpacity onPress={() => navigation.navigate("Edit", {data: item}) } style={tw`w-[98%] mb-0.5 mx-auto bg-purple-300 rounded-sm px-1`}> 
+    <TouchableOpacity onPress={() => navigation.navigate("Edit", {data: item}) } style={{backgroundColor: noteColor[lightMode]}}> 
       <Text>{item.title}</Text>
       <Text>{item.content}</Text>
     </TouchableOpacity>
   )
   return (
     <View style={styles.background}>
+      <TextInput style={styles.inputfield}
+        onChangeText={text => onSearchChange(text)}
+        onSubmitEditing={submitSearch}
+        placeholder="Search"
+      />
       {searchData ? 
         <MasonryList
           style={tw`px-0.5 pt-0.5 pb-20`}
@@ -82,7 +94,11 @@ function EditScreen({ route, navigation }) {
     if (deleteNoteData != undefined) {
       navigation.navigate("Home");
     }
-  }, [deleteNoteData]);
+
+    return () => {
+      updateNote({ id: route.params.data.id, title: title, content: content});
+    };
+  }, [deleteNoteData, content, title]);
 
   return (
     <View style={tw`flex-1 bg-purple-400`}>
