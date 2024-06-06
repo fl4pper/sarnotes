@@ -8,10 +8,12 @@ import { store } from './store';
 import MasonryList from '@react-native-seoul/masonry-list'
 import { useSearchNotesQuery, useAddNoteMutation, useDeleteNoteMutation, useUpdateNoteMutation } from './db';
 
+//colour arrays for background, header and note background
 const bodyColor = ['rgb(241, 245, 249)', 'rgb(30,41,59)']
 const headerColor = ['rgb(156, 163, 175)', 'rgb(15,23,42)']
 const noteColor = ['rgb(100, 116, 139)', 'rgb(203, 213, 225)']
 
+//function used to search for notes
 function HomeScreen({ navigation }) {  
   const [submittedSearch, onSubmitSearch] = useState("");
   const [search, onSearchChange] = useState("");
@@ -27,6 +29,7 @@ function HomeScreen({ navigation }) {
     onLightModeChange((lightMode + 1) % 2);
   }
 
+  //styles the screen
   const styles = StyleSheet.create({
     background: {
       backgroundColor:bodyColor[lightMode],
@@ -36,6 +39,7 @@ function HomeScreen({ navigation }) {
     }
   });
 
+  //button to change from night to light mode
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -44,6 +48,7 @@ function HomeScreen({ navigation }) {
     });
   }, [navigation, lightMode]);
 
+  //note item, contains masonry list of notes
   const renderItem = ({ item }) => (
     <TouchableOpacity onPress={() => navigation.navigate("Edit", {data: item}) } style={{backgroundColor: noteColor[lightMode]}}> 
       <Text>{item.title}</Text>
@@ -75,6 +80,7 @@ function HomeScreen({ navigation }) {
   );
 }
 
+//edit screen
 function EditScreen({ route, navigation }) {
   const [title, changeTitle] = useState(route.params.data.title);
   const [content, changeContent] = useState(route.params.data.content);
@@ -82,6 +88,7 @@ function EditScreen({ route, navigation }) {
   const [ deleteNote, { data: deleteNoteData } ] = useDeleteNoteMutation();
   const [ updateNote, { data: updateNoteData } ] = useUpdateNoteMutation();
 
+  //button used to delete note from masonrylist
   useLayoutEffect(() => {
     navigation.setOptions({ 
       headerRight: () => (
@@ -90,6 +97,7 @@ function EditScreen({ route, navigation }) {
      });
   }, []);
 
+  //return button to home screen
   useEffect(() => {
     if (deleteNoteData != undefined) {
       navigation.navigate("Home");
@@ -117,12 +125,14 @@ function EditScreen({ route, navigation }) {
   );
 }
 
+//screen for adding notes
 function AddScreen({ route, navigation }) {
   const [title, changeTitle] = useState('');
   const [content, changeContent] = useState('');
 
   const [ addNote, { data: addNoteData, error: addNoteError }] = useAddNoteMutation();
 
+  //button that saves note to masonrylist
   useLayoutEffect(() => {
     navigation.setOptions({ 
       headerRight: () => (
@@ -131,6 +141,7 @@ function AddScreen({ route, navigation }) {
      });
   }, [title, content, navigation]);
 
+  //return to home screen
   useEffect(() => {
     if (addNoteData != undefined) {
       console.log(addNoteData.title);
