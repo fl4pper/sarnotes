@@ -101,7 +101,7 @@ function EditScreen({ route, navigation }) {
   }, [deleteNoteData, content, title]);
 
   return (
-    <View style={tw`flex-1 bg-purple-400`}>
+    <View style={tw`flex-1 tw bg-slate-400`}>
       <TextInput style={styles.inputfield}
         onChangeText={text => changeTitle(text)}
         value={title}
@@ -139,7 +139,7 @@ function AddScreen({ route, navigation }) {
   }, [addNoteData]);
 
   return (
-    <View style={tw`flex-1 bg-purple-400`}>
+    <View style={tw`flex-1 tw bg-slate-400`}>
       <TextInput style={styles.inputfield}
         onChangeText={text => changeTitle(text)}
         value={title}
